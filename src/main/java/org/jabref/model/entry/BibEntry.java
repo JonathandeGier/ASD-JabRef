@@ -72,7 +72,7 @@ public class BibEntry implements Cloneable {
     private final MultiKeyMap<Field, Character, KeywordList> fieldsAsKeywords = new MultiKeyMap<>();
 
     private final EventBus eventBus = new EventBus();
-    private String id;
+    private BibEntryId id;
     private final ObjectProperty<EntryType> type = new SimpleObjectProperty<>(DEFAULT_TYPE);
 
     private ObservableMap<Field, String> fields = FXCollections.observableMap(new ConcurrentHashMap<>());
@@ -102,7 +102,7 @@ public class BibEntry implements Cloneable {
     private BibEntry(String id, EntryType type) {
         Objects.requireNonNull(id, "Every BibEntry must have an ID");
 
-        this.id = id;
+        this.id = new BibEntryId(id);
         setType(type);
         this.sharedBibEntryData = new SharedBibEntryData();
     }
@@ -277,7 +277,7 @@ public class BibEntry implements Cloneable {
      * Returns this entry's ID.
      */
     public String getId() {
-        return id;
+        return id.getId();
     }
 
     /**
@@ -290,10 +290,10 @@ public class BibEntry implements Cloneable {
     public void setId(String id) {
         Objects.requireNonNull(id, "Every BibEntry must have an ID");
 
-        String oldId = this.id;
+        String oldId = this.id.getId();
 
         eventBus.post(new FieldChangedEvent(this, InternalField.INTERNAL_ID_FIELD, id, oldId));
-        this.id = id;
+        this.id = new BibEntryId(id);
         changed = true;
     }
 
